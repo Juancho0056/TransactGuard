@@ -55,4 +55,4 @@ Los workers no exponen HTTP pero su configuración y flujo se documentan en [Tra
 
 ## Pruebas automatizadas
 
-`TestSolution` contiene cuatro proyectos de pruebas (dominio de antifraude, dominio de transacciones, BuildingBlocks y utilidades compartidas). Ejecuta todo el set con `dotnet test TransactGuard.sln` antes de proponer cambios para asegurar que las reglas de negocio y las políticas antifraude se mantienen.
+`TransactGuard` contiene cuatro proyectos de pruebas (dominio de antifraude, dominio de transacciones, BuildingBlocks y utilidades compartidas). Ejecuta todo el set con `dotnet test TransactGuard.sln` antes de proponer cambios para asegurar que las reglas de negocio y las políticas antifraude se mantienen.

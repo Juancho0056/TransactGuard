@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06. AntiFraudService", "06.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03. TransactionService", "03. TransactionService", "{B940BDFF-8247-41D9-9668-3B418D6A2BEC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07. TestSolution", "07. TestSolution", "{60AE0A92-C6BF-47CD-B9BA-BB60521A9A8F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07. TransactGuard", "07. TransactGuard", "{60AE0A92-C6BF-47CD-B9BA-BB60521A9A8F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04. TransactionFraudWorker", "04. TransactionFraudWorker", "{9441B0C4-AACA-47D5-923A-4DD5D38320FA}"
 EndProject
@@ -36,13 +36,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "BuildingBlocks\Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "TransactionService\src\Domain\Domain.csproj", "{95854A9C-E383-AB48-9233-ACF99FE99637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "TestSolution\Tests.Common\Tests.Common.csproj", "{2F6047EF-1EF8-45AF-BA18-0C2791298549}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "TransactGuard\Tests.Common\Tests.Common.csproj", "{2F6047EF-1EF8-45AF-BA18-0C2791298549}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Tests", "TestSolution\BuildingBlocks.Tests\BuildingBlocks.Tests.csproj", "{04A5357E-69B6-4E52-A976-061AD830EB23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Tests", "TransactGuard\BuildingBlocks.Tests\BuildingBlocks.Tests.csproj", "{04A5357E-69B6-4E52-A976-061AD830EB23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiFraudService.Tests", "TestSolution\AntiFraudService.Tests\AntiFraudService.Tests.csproj", "{2D385101-415A-4C38-A136-4274C72F1630}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiFraudService.Tests", "TransactGuard\AntiFraudService.Tests\AntiFraudService.Tests.csproj", "{2D385101-415A-4C38-A136-4274C72F1630}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionService.Tests", "TestSolution\TransactionService.Tests\TransactionService.Tests.csproj", "{0210E71D-90BB-41E8-AD18-E6E803C52960}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionService.Tests", "TransactGuard\TransactionService.Tests\TransactionService.Tests.csproj", "{0210E71D-90BB-41E8-AD18-E6E803C52960}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "BuildingBlocks\Application\Application.csproj", "{490D1332-9B73-9C25-A8A2-CA0239E8CFE6}"
 EndProject
