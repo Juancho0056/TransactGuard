@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <RootNamespace>TransactionOutboxWorker</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TransactionService\src\Application\Application.csproj" />
+    <ProjectReference Include="..\..\..\TransactionService\src\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

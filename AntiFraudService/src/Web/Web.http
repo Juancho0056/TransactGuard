@@ -1,0 +1,14 @@
+@AntiFraudService_Web_HostAddress = https://localhost:5001
+
+### Get weather forecasts
+GET {{AntiFraudService_Web_HostAddress}}/api/WeatherForecasts
+Authorization: Bearer {{access_token}}
+
+### Example login
+# POST {{AntiFraudService_Web_HostAddress}}/api/Account/Login
+# Content-Type: application/json
+#
+# {
+#   "email": "administrator@localhost",
+#   "password": "Administrator1!"
+# }

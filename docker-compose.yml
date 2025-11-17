@@ -1,0 +1,144 @@
+services:
+  antifraud-db:
+    image: ${ANTIFRAUD_DB_IMAGE:-postgres:14}
+    container_name: ${ANTIFRAUD_DB_CONTAINER_NAME:-antifraud-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${ANTIFRAUD_DB_NAME:-antifraud_service}
+      POSTGRES_USER: ${ANTIFRAUD_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${ANTIFRAUD_DB_PASSWORD:-postgres}
+    ports:
+      - "${ANTIFRAUD_DB_PORT:-5432}:5432"
+    volumes:
+      - antifraud-db-data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  transaction-db:
+    image: ${TRANSACTION_DB_IMAGE:-postgres:14}
+    container_name: ${TRANSACTION_DB_CONTAINER_NAME:-transaction-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${TRANSACTION_DB_NAME:-transaction_service}
+      POSTGRES_USER: ${TRANSACTION_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${TRANSACTION_DB_PASSWORD:-postgres}
+    ports:
+      - "${TRANSACTION_DB_PORT:-5433}:5432"
+    volumes:
+      - transaction-db-data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  zookeeper:
+    image: ${ZOOKEEPER_IMAGE:-confluentinc/cp-zookeeper:5.5.3}
+    container_name: ${ZOOKEEPER_CONTAINER_NAME:-zookeeper}
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT:-2181}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME:-2000}
+    ports:
+      - "${ZOOKEEPER_CLIENT_PORT:-2181}:2181"
+    networks:
+      - microservices
+
+  kafka:
+    image: ${KAFKA_IMAGE:-confluentinc/cp-enterprise-kafka:5.5.3}
+    container_name: ${KAFKA_CONTAINER_NAME:-kafka}
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_ID:-1}
+      KAFKA_ZOOKEEPER_CONNECT: ${KAFKA_ZOOKEEPER_CONNECT:-zookeeper:2181}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:-PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS:-PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092}
+      KAFKA_LISTENERS: ${KAFKA_LISTENERS:-PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:-1}
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR:-1}
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_TRANSACTION_STATE_LOG_MIN_ISR:-1}
+      KAFKA_JMX_PORT: ${KAFKA_JMX_PORT:-9991}
+      KAFKA_JMX_HOSTNAME: ${KAFKA_JMX_HOSTNAME:-localhost}
+    ports:
+      - "${KAFKA_EXTERNAL_PORT:-9092}:9092"
+      - "${KAFKA_JMX_PORT:-9991}:9991"
+    networks:
+      - microservices
+
+  antifraud-service:
+    build:
+      context: .
+      dockerfile: AntiFraudService/Dockerfile
+    image: ${ANTIFRAUD_SERVICE_IMAGE:-antifraud-service}
+    container_name: ${ANTIFRAUD_SERVICE_CONTAINER_NAME:-antifraud-service}
+    restart: unless-stopped
+    depends_on:
+      - antifraud-db
+      - kafka
+    env_file:
+      - ${ANTIFRAUD_SERVICE_ENV_FILE:-AntiFraudService/.env}
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ANTIFRAUD_SERVICE_ENVIRONMENT:-Production}
+    ports:
+      - "${ANTIFRAUD_SERVICE_PORT:-8081}:8080"
+    networks:
+      - microservices
+
+  transaction-service:
+    build:
+      context: .
+      dockerfile: TransactionService/Dockerfile
+    image: ${TRANSACTION_SERVICE_IMAGE:-transaction-service}
+    container_name: ${TRANSACTION_SERVICE_CONTAINER_NAME:-transaction-service}
+    restart: unless-stopped
+    depends_on:
+      - transaction-db
+      - kafka
+    env_file:
+      - ${TRANSACTION_SERVICE_ENV_FILE:-TransactionService/.env}
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${TRANSACTION_SERVICE_ENVIRONMENT:-Production}
+    ports:
+      - "${TRANSACTION_SERVICE_PORT:-8082}:8080"
+    networks:
+      - microservices
+
+  transaction-fraud-worker:
+    build:
+      context: .
+      dockerfile: TransactionFraudWorker/Dockerfile
+    image: ${TRANSACTION_FRAUD_WORKER_IMAGE:-transaction-fraud-worker}
+    container_name: ${TRANSACTION_FRAUD_WORKER_CONTAINER_NAME:-transaction-fraud-worker}
+    restart: unless-stopped
+    depends_on:
+      - antifraud-service
+      - transaction-service
+      - kafka
+    environment:
+      DOTNET_ENVIRONMENT: ${TRANSACTION_FRAUD_WORKER_ENVIRONMENT:-Production}
+    networks:
+      - microservices
+
+  transaction-outbox-worker:
+    build:
+      context: .
+      dockerfile: TransactionOutboxWorker/Dockerfile
+    image: ${TRANSACTION_OUTBOX_WORKER_IMAGE:-transaction-outbox-worker}
+    container_name: ${TRANSACTION_OUTBOX_WORKER_CONTAINER_NAME:-transaction-outbox-worker}
+    restart: unless-stopped
+    depends_on:
+      - transaction-service
+      - kafka
+    env_file:
+      - ${TRANSACTION_OUTBOX_WORKER_ENV_FILE:-TransactionOutboxWorker/.env}
+    environment:
+      DOTNET_ENVIRONMENT: ${TRANSACTION_OUTBOX_WORKER_ENVIRONMENT:-Production}
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge
+
+volumes:
+  antifraud-db-data:
+  transaction-db-data:
